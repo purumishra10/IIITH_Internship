@@ -1,0 +1,7 @@
+# IIITH Internship - Object Detection & Video Processing Dependencies
+ultralytics>=8.0.0
+opencv-python>=4.8.0
+yt-dlp>=2023.0.0
+pyyaml>=6.0
+numpy>=1.24.0
+pillow>=9.5.0
