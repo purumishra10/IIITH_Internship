@@ -1,0 +1,21 @@
+{
+  "project": "Car and Truck Detection Dataset",
+  "week": "Week 5 - Task 1",
+  "author": "Purusharth Mishra",
+  "institution": "IIITH Internship",
+  "description": "Custom YOLO dataset created from real traffic footage for detecting cars and trucks.",
+  "classes": ["car", "truck"],
+  "num_classes": 2,
+  "video_source": "YouTube - traffic footage",
+  "fps_extracted": 10,
+  "total_frames_extracted": 600,
+  "dataset_split": {
+    "train": 100,
+    "val": 40,
+    "test": 460
+  },
+  "annotation_tool": "Label Studio",
+  "label_format": "YOLO (normalized cx cy w h)",
+  "tools_used": ["FFmpeg", "yt-dlp", "Label Studio", "Python 3.11.9", "Git"],
+  "notes": "Images and raw video excluded from GitHub due to file size limits. Labels, metadata, and scripts are version controlled."
+}
