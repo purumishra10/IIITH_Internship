@@ -28,6 +28,7 @@ env/
 
 # Datasets and Media
 *.mp4
+!Week 5/Week5_Task5/traffic.mp4
 *.avi
 *.mov
 *.mkv
