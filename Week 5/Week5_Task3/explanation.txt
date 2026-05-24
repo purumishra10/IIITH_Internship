@@ -1,0 +1,227 @@
+====================================================
+WEEK 5 - TASK 3: Training a Custom YOLOv8 Model on Google Colab
+====================================================
+
+WHAT IS THE BIG GOAL?
+----------------------
+In Week 5 Task 1, we created a custom dataset of cars and trucks in real traffic footage.
+In Week 5 Task 2, we optimized that dataset for training by resizing all images to 384x216.
+
+In Week 5 Task 3, we finally used this custom dataset to train our own
+YOLOv8 object detection model. This is the culmination of the data
+preparation process: teaching an AI model to detect the specific objects
+we care about based entirely on our own labeled examples.
+
+Since training neural networks requires significant computational power,
+this task was performed on Google Colab using a free cloud GPU, rather
+than on a local laptop CPU. The resulting trained model weights (`best.pt`)
+and evaluation metrics were then downloaded back to our local project folder.
+
+The task involved:
+1. Uploading the resized dataset to Google Drive
+2. Setting up a Google Colab notebook with a T4 GPU
+3. Installing the Ultralytics YOLOv8 library in the Colab environment
+4. Training the YOLOv8 model for 50 epochs on our custom dataset
+5. Evaluating model performance using validation metrics and plots
+6. Downloading the trained model weights (`best.pt`) and evaluation charts
+7. Pushing the final training artifacts to GitHub
+
+
+WHY TRAIN ON GOOGLE COLAB INSTEAD OF LOCALLY?
+-----------------------------------------------
+Training a deep learning model involves millions of mathematical operations
+(matrix multiplications) per second.
+
+CPUs (Central Processing Units) are designed for general-purpose tasks
+and process operations sequentially. Training YOLOv8 on a standard laptop
+CPU would take many hours, or even days, for a relatively small dataset.
+
+GPUs (Graphics Processing Units) are designed with thousands of smaller cores
+that perform operations in parallel. This makes them exceptionally fast at
+the specific mathematical operations required for deep learning.
+
+Google Colab provides free access to powerful GPUs (like the NVIDIA T4).
+A training run that might take 12 hours on a laptop CPU can complete in
+under 10 minutes on a Colab T4 GPU.
+
+This is why professional AI development almost always uses dedicated GPU
+hardware or cloud GPU instances for the training phase.
+
+
+UNDERSTANDING THE TRAINING PROCESS
+------------------------------------
+YOLOv8 training is an iterative process where the model gradually learns
+to map the visual features in the images to the bounding boxes we provided.
+
+Key concepts during training:
+
+Epochs:
+  One epoch is one complete pass through the entire training dataset.
+  We trained for 50 epochs, meaning the model looked at our training
+  images 50 times, adjusting its internal parameters each time to improve
+  its predictions.
+
+Loss:
+  A mathematical measure of how wrong the model's predictions are compared
+  to our ground truth labels. During training, the goal of the algorithm
+  is to minimize this loss.
+  - Box loss: How far off the predicted bounding box coordinates are.
+  - Class loss: How often it confuses a car for a truck (or vice versa).
+
+Pre-trained Weights (yolov8n.pt):
+  Instead of starting from a completely blank, randomized model, we started
+  with `yolov8n.pt` (YOLOv8 Nano). This model was previously trained on the
+  massive COCO dataset, so it already knew how to detect basic shapes, edges,
+  and textures.
+  This technique is called Transfer Learning. We take a model that already
+  understands general vision and fine-tune it specifically on our images
+  of cars and trucks. This requires vastly less data and time than training
+  from scratch.
+
+
+EVALUATING MODEL PERFORMANCE
+------------------------------
+After training, the model's performance must be evaluated objectively.
+YOLO automatically generates several plots to help us understand how well
+our custom model actually works.
+
+best.pt:
+  This is the actual saved model file containing the trained neural network
+  weights. YOLO saves `last.pt` (the state at the final epoch) and `best.pt`
+  (the state at the epoch with the highest validation accuracy). We keep
+  `best.pt` for future inference tasks.
+
+Confusion Matrix (confusion_matrix.png):
+  A table showing what the model predicted versus what the true label was.
+  - Diagonal cells: Correct predictions (e.g., predicted Car, true label Car).
+  - Off-diagonal cells: Errors (e.g., predicted Truck, true label Car; or
+    Background false positives/negatives).
+  This helps diagnose if the model is confusing specific classes.
+
+Precision-Recall Curve (BoxPR_curve.png):
+  - Precision: When the model predicts a Car, how often is it actually a Car?
+    (Measures false positives).
+  - Recall: Out of all the actual Cars in the image, how many did the model
+    find? (Measures false negatives).
+  The PR curve shows the trade-off between these two metrics at different
+  confidence thresholds. A model with an Area Under the Curve (AUC) close to
+  1.0 is highly accurate.
+
+Training Results (results.png):
+  A comprehensive dashboard showing how the various losses decreased and
+  how precision/recall increased over the 50 epochs.
+  If the training loss continues to decrease but validation loss starts
+  to increase, the model is "overfitting" (memorizing the training data
+  rather than learning general patterns).
+
+
+THE TOOLS WE USED
+------------------
+Tool 1 - Google Colab:
+  A free cloud-based Jupyter notebook environment provided by Google.
+  Used to write and execute the Python code for YOLO training on a T4 GPU.
+
+Tool 2 - Google Drive:
+  Used as cloud storage to transfer our local dataset to the Colab environment.
+
+Tool 3 - Ultralytics YOLOv8:
+  The Python library installed in Colab to perform the actual model training.
+  Provides a simple `model.train()` interface that handles the complex deep
+  learning training loop automatically.
+
+Tool 4 - Git and GitHub:
+  Used to push the final trained model weights and evaluation plots from our
+  local machine to the remote repository.
+
+
+THE FOLDER STRUCTURE AFTER TASK 3
+------------------------------------
+  Week5_Task3\
+  ├── images_resized\      (copied from Task2, used for reference/upload)
+  ├── labels\              (copied from Task1/Task2, used for reference/upload)
+  ├── data.yaml            (updated path for Colab Drive environment)
+  ├── best.pt              (The final trained model weights, downloaded from Colab)
+  ├── confusion_matrix.png (Evaluation plot, downloaded from Colab)
+  ├── BoxPR_curve.png      (Evaluation plot, downloaded from Colab)
+  └── results.png          (Training metrics plot, downloaded from Colab)
+
+
+STEP BY STEP - WHAT EXACTLY HAPPENED
+--------------------------------------
+
+STEP 1: Uploaded Dataset to Google Drive
+  The `images_resized` and `labels` folders, along with `data.yaml`,
+  were uploaded to Google Drive in a folder named `IIITH_Week5_Task3`.
+
+STEP 2: Updated data.yaml for Colab
+  In Colab, Google Drive is mounted at `/content/drive/MyDrive/`.
+  The `path` variable in `data.yaml` was updated to point to this new location
+  so YOLO could find the images and labels during training.
+
+  Updated data.yaml contents:
+    path: /content/drive/MyDrive/IIITH_Week5_Task3
+    train: images_resized/train
+    val: images_resized/val
+    test: images_resized/test
+    nc: 2
+    names:
+      0: car
+      1: truck
+
+STEP 3: Configured Google Colab Environment
+  - Opened a new Colab Notebook.
+  - Changed Runtime Type to T4 GPU.
+  - Mounted Google Drive to access the uploaded dataset:
+      from google.colab import drive
+      drive.mount('/content/drive')
+  - Installed the Ultralytics library:
+      !pip install ultralytics
+
+STEP 4: Ran Model Training
+  Executed the YOLO training script directly in the Colab notebook:
+
+    from ultralytics import YOLO
+    model = YOLO("yolov8n.pt") # Start with pre-trained COCO weights
+    model.train(data="/content/drive/MyDrive/IIITH_Week5_Task3/data.yaml",
+                epochs=50,
+                imgsz=384,
+                batch=16)
+
+  This process ran for several minutes, printing loss and accuracy metrics
+  for each of the 50 epochs.
+
+STEP 5: Downloaded Training Artifacts
+  Once training completed, YOLO saved all outputs into a `runs/detect/train/`
+  directory in the Colab environment.
+  The most important files were downloaded back to the local machine:
+  - `weights/best.pt`
+  - `confusion_matrix.png`
+  - `BoxPR_curve.png`
+  - `results.png`
+
+STEP 6: Pushed Results to GitHub
+  The downloaded artifacts were placed into the local `Week5_Task3` folder
+  and pushed to the remote repository.
+
+
+SUMMARY OF COMMANDS USED (IN COLAB)
+-------------------------------------
+  Mount Drive:
+    from google.colab import drive
+    drive.mount('/content/drive')
+
+  Install YOLO:
+    !pip install ultralytics
+
+  Train Model:
+    from ultralytics import YOLO
+    model = YOLO("yolov8n.pt")
+    model.train(data="/content/drive/MyDrive/IIITH_Week5_Task3/data.yaml", epochs=50, imgsz=384)
+
+
+NEXT STEPS
+-----------
+With the custom model fully trained and saved as `best.pt`, it can now be used
+for inference. The next step is to load `best.pt` in a Python script and run
+it on the test images or the original raw video to visualize how well it
+detects cars and trucks in the real world.

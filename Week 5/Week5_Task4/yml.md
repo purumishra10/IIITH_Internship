@@ -5,7 +5,7 @@ This file explains the `data.yaml` used for YOLO training.
 ## Contents of data.yaml
 
 ```yaml
-path: D:/Puru_VNR/Projects/IIITH/Internship/Week4_Task2
+path: D:/Puru_VNR/Projects/IIITH/Internship/Week5_Task2
 train: images/train
 val: images/val
 test: images/test

@@ -1,7 +1,7 @@
 path: /content/drive/MyDrive/IIITH_Week5_Task3
-train: images_resized/train
-val: images_resized/val
-test: images_resized/test
+train: images/train
+val: images/val
+test: images/test
 
 nc: 2
 names:
